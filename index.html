@@ -1,612 +1,459 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=yes">
-  <meta name="theme-color" content="#FF6B35">
-  <title>مدينة العصائر - النظام السحابي</title>
-  <!-- Firebase SDK (النسخة المستقرة) -->
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
-  <!-- الخطوط والأيقونات -->
-  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-    :root {
-      --primary: #FF6B35; --primary-dark: #E55A2B; --accent: #004E89;
-      --success: #06D6A0; --danger: #EF476F; --warning: #FFD60A;
-      --bg: #0A0D14; --card-bg: rgba(26, 31, 46, 0.85); --card-bg-solid: #1A1F2E;
-      --text: #FFFFFF; --text-light: #B0B8C1; --border: rgba(255,255,255,0.08);
-    }
-    body {
-      background: radial-gradient(circle at 50% 0%, #141A29, #080C12);
-      color: var(--text); font-family: 'Tajawal', sans-serif;
-      min-height: 100vh; padding: 20px 16px 90px;
-      overflow-x: hidden;
-    }
-    /* شاشة تسجيل الدخول */
-    .auth-container {
-      max-width: 400px; margin: 40px auto; background: var(--card-bg);
-      backdrop-filter: blur(20px); border-radius: 32px; padding: 2rem;
-      border: 1px solid var(--border); box-shadow: 0 25px 45px rgba(0,0,0,0.3);
-    }
-    .app-main { display: none; }
-    .btn { padding: 12px 20px; border-radius: 16px; border: none; font-weight: 700;
-      font-family: 'Tajawal'; cursor: pointer; transition: 0.2s; display: inline-flex;
-      align-items: center; justify-content: center; gap: 8px; width: 100%; margin-top: 10px;
-    }
-    .btn-primary { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; }
-    .btn-danger { background: var(--danger); color: white; }
-    .btn-outline { background: transparent; border: 1px solid var(--border); color: white; }
-    .form-group { margin-bottom: 1rem; }
-    input, select {
-      width: 100%; padding: 12px 16px; background: rgba(0,0,0,0.4);
-      border: 1px solid var(--border); border-radius: 16px; color: white;
-      font-family: 'Tajawal'; font-size: 0.9rem;
-    }
-    .card {
-      background: var(--card-bg); backdrop-filter: blur(20px); border-radius: 24px;
-      padding: 1.25rem; margin-bottom: 1.2rem; border: 1px solid var(--border);
-    }
-    h2 { font-size: 1.25rem; font-weight: 900; margin-bottom: 1rem; color: var(--primary); display: flex; align-items: center; gap: 8px; }
-    .role-badge { background: var(--primary); padding: 4px 12px; border-radius: 30px; font-size: 0.75rem; }
-    .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-    .nav-buttons { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
-    .nav-btn { background: none; border: none; color: var(--text-light); font-weight: 700; padding: 8px 16px; border-radius: 40px; cursor: pointer; }
-    .nav-btn.active { background: var(--primary); color: white; }
-    .table-container { overflow-x: auto; border-radius: 16px; background: rgba(0,0,0,0.2); }
-    table { width: 100%; border-collapse: collapse; text-align: right; font-size: 0.8rem; }
-    th, td { padding: 10px; border-bottom: 1px solid var(--border); white-space: nowrap; }
-    th { background: rgba(255,107,53,0.15); color: var(--primary); }
-    .status-badge { padding: 4px 8px; border-radius: 20px; font-size: 0.7rem; font-weight: bold; }
-    .status-pending { background: #FFD60A20; color: #FFD60A; }
-    .status-delivering { background: #06D6A020; color: #06D6A0; }
-    .status-delivered { background: #06D6A0; color: #0A0D14; }
-    .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: var(--card-bg-solid); border: 1px solid var(--primary); padding: 10px 20px; border-radius: 30px; z-index: 2000; display: none; font-weight: bold; }
-    @media (max-width: 600px) { body { padding: 12px 12px 80px; } .card { padding: 1rem; } }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=yes">
+    <meta name="theme-color" content="#FF6B35">
+    <title>مدينة العصائر - النظام السحابي</title>
+    
+    <!-- مكتبات Firebase المستقرة والمتوافقة 100% مع المتصفحات وهواتف أندرويد 5 -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        :root {
+            --primary: #FF6B35; --primary-dark: #E55A2B; --accent: #004E89;
+            --success: #06D6A0; --danger: #EF476F; --warning: #FFD166;
+            --bg: #0A0D14; --card-bg: rgba(26, 31, 46, 0.85); --card-bg-solid: #1A1F2E;
+            --text: #FFFFFF; --text-light: #8B98C1; --border: rgba(255,255,255,0.08);
+        }
+        body {
+            background: radial-gradient(circle at 50% 0%, #141A29, #0A0D14);
+            color: var(--text); font-family: 'Tajawal', sans-serif;
+            min-height: 100vh; padding: 20px 16px 90px; overflow-x: hidden;
+        }
+        .auth-container {
+            max-width: 400px; margin: 40px auto; background: var(--card-bg);
+            backdrop-filter: blur(20px); border-radius: 32px; padding: 2rem;
+            border: 1px solid var(--border); box-shadow: 0 25px 45px rgba(0,0,0,0.3);
+        }
+        .app-main { display: none; max-width: 800px; margin: 0 auto; }
+        .btn {
+            padding: 12px 20px; border-radius: 14px; border: none; font-weight: 700;
+            font-family: 'Tajawal'; cursor: pointer; transition: 0.2s; display: inline-flex;
+            align-items: center; justify-content: center; gap: 8px; width: 100%; margin-top: 10px;
+        }
+        .btn-primary { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; }
+        .btn-danger { background: var(--danger); color: white; }
+        .btn-outline { background: transparent; border: 1px solid var(--border); color: white; }
+        .form-group { margin-bottom: 1.2rem; }
+        label { display: block; margin-bottom: 6px; color: var(--text-light); font-size: 0.9rem; }
+        input, select {
+            width: 100%; padding: 12px 16px; background: rgba(0,0,0,0.4);
+            border: 1px solid var(--border); border-radius: 14px; color: white;
+            font-family: 'Tajawal'; font-size: 0.95rem; outline: none; transition: 0.2s;
+        }
+        input:focus, select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(255,107,53,0.2); }
+        .card {
+            background: var(--card-bg); backdrop-filter: blur(20px); border-radius: 24px;
+            padding: 1.25rem; margin-bottom: 1.2rem; border: 1px solid var(--border);
+        }
+        h2 { font-size: 1.25rem; font-weight: 900; margin-bottom: 1rem; color: var(--primary); display: flex; align-items: center; gap: 8px; }
+        .role-badge { background: var(--primary); padding: 4px 12px; border-radius: 30px; font-size: 0.75rem; }
+        .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .nav-buttons { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid var(--border); }
+        .nav-btn { background: none; border: none; color: var(--text-light); font-weight: 700; padding: 8px 16px; border-radius: 12px; cursor: pointer; transition: 0.2s; }
+        .nav-btn.active { background: var(--primary); color: white; }
+        .table-container { overflow-x: auto; border-radius: 16px; background: rgba(0,0,0,0.2); }
+        table { width: 100%; border-collapse: collapse; text-align: right; font-size: 0.85rem; }
+        th, td { padding: 10px; border-bottom: 1px solid var(--border); white-space: nowrap; }
+        th { background: rgba(255,107,53,0.15); color: var(--primary); }
+        .status-badge { padding: 4px 8px; border-radius: 20px; font-size: 0.7rem; font-weight: bold; text-align: center; display: inline-block; }
+        .status-pending { background: #FFD16620; color: #FFD166; }
+        .status-delivering { background: #004E8940; color: #004E89; }
+        .status-delivered { background: #06D6A020; color: #06D6A0; }
+        .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: var(--card-bg-solid); border: 1px solid var(--border); padding: 12px 24px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 9999; display: none; font-weight: bold; text-align: center; min-width: 250px; animation: slideUp 0.3s ease; }
+        @keyframes slideUp { from { bottom: -50px; opacity: 0; } to { bottom: 20px; opacity: 1; } }
+        .app-section { display: none; }
+        .app-section.active { display: block; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        @media (max-width: 600px) { body { padding: 12px 12px 80px; } .card { padding: 1rem; } }
+    </style>
 </head>
 <body>
-<div id="toastMsg" class="toast"></div>
 
-<!-- شاشة تسجيل الدخول -->
-<div id="authScreen" class="auth-container">
-  <div style="text-align:center; margin-bottom:30px;">
-    <span style="font-size:3rem;">🧃</span>
-    <h2 style="color:var(--primary);">مدينة العصائر</h2>
-    <p>نظام إدارة التوصيل السحابي</p>
-  </div>
-  <div id="authTabs" style="display: flex; gap: 10px; margin-bottom: 20px;">
-    <button id="loginTabBtn" class="btn btn-primary" style="margin:0;">تسجيل الدخول</button>
-    <button id="registerTabBtn" class="btn btn-outline" style="margin:0;">إنشاء حساب</button>
-  </div>
-  <div id="loginPanel">
-    <div class="form-group"><input type="email" id="loginEmail" placeholder="البريد الإلكتروني"></div>
-    <div class="form-group"><input type="password" id="loginPassword" placeholder="كلمة المرور"></div>
-    <button class="btn btn-primary" onclick="loginUser()">دخول ➡️</button>
-  </div>
-  <div id="registerPanel" style="display:none;">
-    <div class="form-group"><input type="email" id="regEmail" placeholder="البريد الإلكتروني"></div>
-    <div class="form-group"><input type="password" id="regPassword" placeholder="كلمة المرور"></div>
-    <div class="form-group"><input type="text" id="regName" placeholder="الاسم الكامل"></div>
-    <button class="btn btn-primary" onclick="registerUser()">إنشاء حساب</button>
-    <p class="note" style="font-size:0.7rem; margin-top:12px;">* أول مستخدم يتم تسجيله يصبح مديراً تلقائياً.</p>
-  </div>
-</div>
+    <div id="toastMsg" class="toast"></div>
 
-<!-- المحتوى الرئيسي للتطبيق (يظهر بعد الدخول) -->
-<div id="appMain" class="app-main">
-  <div class="top-bar">
-    <h2>🧃 مدينة العصائر</h2>
-    <div><span id="userRoleSpan" class="role-badge"></span> <button class="btn-outline" style="padding:4px 12px; margin-right:8px;" onclick="logout()">خروج</button></div>
-  </div>
-
-  <!-- أزرار التنقل حسب الصلاحية ستنشأ ديناميكياً -->
-  <div id="navButtons" class="nav-buttons"></div>
-
-  <!-- محتوى الصفحات -->
-  <div id="ordersPage" class="page-content" style="display:none;">
-    <div class="card">
-      <h2>📝 إدارة الطلبات</h2>
-      <div id="orderForm">
-        <input type="hidden" id="editOrderId">
-        <div class="form-group"><input type="number" id="orderNo" placeholder="رقم الطلب*"></div>
-        <div class="form-group"><input type="text" id="customerPhone" placeholder="هاتف العميل*"></div>
-        <div class="form-group"><input type="text" id="customerName" placeholder="اسم المستلم"></div>
-        <div class="form-group"><input type="text" id="address" placeholder="العنوان*"></div>
-        <div class="form-group"><input type="number" id="amount" step="0.01" placeholder="المبلغ*"></div>
-        <div class="form-group"><input type="text" id="paymentMethod" placeholder="طريقة الدفع (كاش/جيب/كريمي...)"></div>
-        <div class="form-group" id="courierSelectGroup"><select id="assignedCourier"><option value="">-- اختر مندوب --</option></select></div>
-        <button class="btn btn-primary" onclick="saveOrder()">💾 حفظ الطلب</button>
-        <button class="btn btn-outline" onclick="resetOrderForm()">إلغاء</button>
-      </div>
+    <!-- شاشة تسجيل الدخول -->
+    <div id="authScreen" class="auth-container">
+        <div style="text-align:center; margin-bottom:30px;">
+            <span style="font-size: 3rem;">🍊</span>
+            <h2 style="color:var(--primary); justify-content:center;">مدينة العصائر</h2>
+            <p style="color:var(--text-light); font-size:0.9rem;">نظام إدارة التوصيل السحابي الذكي</p>
+        </div>
+        <form id="loginForm">
+            <div class="form-group">
+                <label>البريد الإلكتروني</label>
+                <input type="email" id="loginEmail" required placeholder="name@cityjuice.com">
+            </div>
+            <div class="form-group">
+                <label>كلمة المرور</label>
+                <input type="password" id="loginPassword" required placeholder="••••••••">
+            </div>
+            <button type="submit" class="btn btn-primary">تسجيل الدخول سحابياً 🔐</button>
+        </form>
     </div>
-    <div class="card">
-      <h2>📋 قائمة الطلبات</h2>
-      <div class="table-container"><table id="ordersTable"><thead><tr><th>رقم</th><th>العميل</th><th>العنوان</th><th>المبلغ</th><th>الدفع</th><th>المندوب</th><th>الحالة</th><th>إجراءات</th></tr></thead><tbody></tbody></table></div>
+
+    <!-- الشاشة الرئيسية للنظام -->
+    <div id="appScreen" class="app-main">
+        <div class="top-bar card">
+            <div>
+                <h1 style="font-size:1.3rem; font-weight:900;">لوحة التحكم السحابية ⚡</h1>
+                <span id="userBadge" class="role-badge">جاري التحميل...</span>
+            </div>
+            <button id="logoutBtn" class="btn btn-outline" style="width:auto; margin:0; padding:8px 14px; font-size:0.85rem;">خروج 🚶</button>
+        </div>
+
+        <div class="nav-buttons">
+            <button class="nav-btn active" onclick="switchSection('ordersSection', this)">📦 الطلبات الحالية</button>
+            <button id="navAddOrder" class="nav-btn" onclick="switchSection('addOrderSection', this)">➕ إضافة طلب</button>
+            <button id="navDrivers" class="nav-btn" onclick="switchSection('driversSection', this)">🛵 السائقين والمشرفين</button>
+        </div>
+
+        <!-- قسم عرض الطلبات -->
+        <div id="ordersSection" class="app-section active">
+            <div class="card">
+                <h2>📦 قائمة الطلبات النشطة</h2>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>العميل</th>
+                                <th>الهاتف</th>
+                                <th>العنوان</th>
+                                <th>العصير</th>
+                                <th>الحساب</th>
+                                <th>السائق</th>
+                                <th>الحالة</th>
+                                <th>إجراء</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ordersTableBody">
+                            <tr><td colspan="8" style="text-align:center; color:var(--text-light);">جاري جلب البيانات من السحابة...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- قسم إضافة طلب جديد -->
+        <div id="addOrderSection" class="app-section">
+            <div class="card">
+                <h2>➕ تسجيل طلب سحابي جديد</h2>
+                <form id="orderForm">
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label>اسم العميل</label>
+                            <input type="text" id="custName" required placeholder="محمد أحمد">
+                        </div>
+                        <div class="form-group">
+                            <label>رقم الهاتف</label>
+                            <input type="tel" id="custPhone" required placeholder="777xxxxxx">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>عنوان التوصيل الدقيق</label>
+                        <input type="text" id="custAddress" required placeholder="الشارع - بجانب معلم معروف">
+                    </div>
+                    <div class="form-group">
+                        <label>تفاصيل الطلب (نوع العصير والعدد)</label>
+                        <input type="text" id="orderItems" required placeholder="3 فركس كبير، 1 مانجو جالون">
+                    </div>
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label>المبلغ الإجمالي (ريال)</label>
+                            <input type="number" id="orderPrice" required placeholder="5000">
+                        </div>
+                        <div class="form-group">
+                            <label>تعيين سائق للتوصيل</label>
+                            <select id="orderDriver">
+                                <option value="">إرسال للمكتب (بدون سائق)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">حفظ وإرسال فوراً لسحابة النظام ☁️</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- قسم إدارة السائقين والموظفين -->
+        <div id="driversSection" class="app-section">
+            <div class="card">
+                <h2>➕ إضافة موظف جديد (سائق / مشرف)</h2>
+                <form id="driverForm">
+                    <div class="form-group">
+                        <label>اسم الموظف</label>
+                        <input type="text" id="driverName" required placeholder="عمر التويتي">
+                    </div>
+                    <div class="form-group">
+                        <label>البريد الإلكتروني الحسابي</label>
+                        <input type="email" id="driverEmail" required placeholder="driver1@cityjuice.com">
+                    </div>
+                    <div class="form-group">
+                        <label>كلمة مرور الحساب</label>
+                        <input type="password" id="driverPassword" required placeholder="من 6 أرقام على الأقل">
+                    </div>
+                    <div class="form-group">
+                        <label>الصلاحية والنظام</label>
+                        <select id="driverRole">
+                            <option value="driver">🛵 كابتن توصيل (سائق)</option>
+                            <option value="admin">⭐ مشرف نظام متكامل</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">إنشاء وتفعيل الحساب فوراً 🔗</button>
+                </form>
+            </div>
+            
+            <div class="card">
+                <h2>👥 الطاقم الحالي المتصل بالمنظومة</h2>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>الاسم</th>
+                                <th>البريد الإلكتروني</th>
+                                <th>الوظيفة</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usersTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
 
-  <div id="couriersPage" class="page-content" style="display:none;">
-    <div class="card">
-      <h2>🚚 المناديب - ترتيب تصاعدي حسب عهدة مبالغ الطلبات الحالية</h2>
-      <div class="table-container"><table id="couriersTable"><thead><tr><th>المندوب</th><th>المستلمة (غير مسواة)</th><th>إجمالي المبلغ المستحق</th><th>حالة الحساب</th><th>التحكم</th></tr></thead><tbody></tbody></table></div>
-    </div>
-    <!-- إدارة حسابات المناديب (للمدير فقط) -->
-    <div class="card" id="manageAccountsCard" style="display:none;">
-      <h2>👥 إدارة حسابات المناديب والكاشير</h2>
-      <div class="form-group"><input type="email" id="newUserEmail" placeholder="البريد الإلكتروني للحساب الجديد"></div>
-      <div class="form-group"><input type="password" id="newUserPass" placeholder="كلمة المرور"></div>
-      <div class="form-group"><input type="text" id="newUserName" placeholder="الاسم"></div>
-      <div class="form-group"><select id="newUserRole"><option value="courier">مندوب</option><option value="cashier">كاشير</option></select></div>
-      <button class="btn btn-primary" onclick="createSubAccount()">➕ إنشاء حساب فرعي</button>
-      <div id="accountsList" style="margin-top:15px;"></div>
-    </div>
-  </div>
+    <script>
+        // إعدادات السحابة الحقيقية والخاصة بمشروعك
+        const firebaseConfig = {
+            apiKey: "AIzaSyBOADtNYiyUIRzTYbNsD-JMJjjn5oD9hS0",
+            authDomain: "city-juice-delivery.firebaseapp.com",
+            projectId: "city-juice-delivery",
+            storageBucket: "city-juice-delivery.firebasestorage.app",
+            messagingSenderId: "127887341738",
+            appId: "1:127887341738:web:4c5ffe9169ed9941cb78d3",
+            measurementId: "G-EHV8N01WCB"
+        };
 
-  <div id="deliveryPage" class="page-content" style="display:none;">
-    <div class="card">
-      <h2>📦 طلبياتي (المندوب)</h2>
-      <div class="table-container"><table id="myOrdersTable"><thead><tr><th>رقم</th><th>العنوان</th><th>المبلغ</th><th>الحالة</th><th>تحديث الحالة</th></tr></thead><tbody></tbody></table></div>
-    </div>
-    <div class="card">
-      <h2>📊 تقريري اليومي</h2>
-      <p>إجمالي المبلغ المُسلَّم اليوم: <strong id="myTotalToday">0</strong> ريال</p>
-    </div>
-  </div>
+        // تهيئة الفايربيس بإصدارها المستقر والمتوافق
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
 
-  <div id="reportsPage" class="page-content" style="display:none;">
-    <div class="card"><h2>📈 تقارير عامة</h2><div id="generalStats"></div></div>
-  </div>
-</div>
+        let currentUserData = null;
 
-<script>
-  // 🔥 ضع إعدادات مشروع Firebase الخاص بك هنا ليعمل النظام
-  const firebaseConfig = {
-    apiKey: "YOUR_API_KEY",
-    authDomain: "YOUR_AUTH_DOMAIN",
-    projectId: "YOUR_PROJECT_ID",
-    storageBucket: "YOUR_STORAGE_BUCKET",
-    messagingSenderId: "YOUR_SENDER_ID",
-    appId: "YOUR_APP_ID"
-  };
-
-  // تهيئة Firebase
-  firebase.initializeApp(firebaseConfig);
-  const auth = firebase.auth();
-  const db = firebase.firestore();
-
-  let currentUser = null;
-  let currentUserRole = null; // 'admin', 'cashier', 'courier'
-  let currentUserUid = null;
-  
-  // دوال مساعدة
-  function showToast(msg) { const t = document.getElementById('toastMsg'); t.innerText = msg; t.style.display='block'; setTimeout(()=> t.style.display='none', 2500); }
-  
-  // تبديل واجهة تسجيل الدخول والتسجيل
-  document.getElementById('loginTabBtn').addEventListener('click',()=>{
-    document.getElementById('loginPanel').style.display='block';
-    document.getElementById('registerPanel').style.display='none';
-    document.getElementById('loginTabBtn').classList.add('btn-primary'); document.getElementById('loginTabBtn').classList.remove('btn-outline');
-    document.getElementById('registerTabBtn').classList.add('btn-outline'); document.getElementById('registerTabBtn').classList.remove('btn-primary');
-  });
-  document.getElementById('registerTabBtn').addEventListener('click',()=>{
-    document.getElementById('loginPanel').style.display='none';
-    document.getElementById('registerPanel').style.display='block';
-    document.getElementById('registerTabBtn').classList.add('btn-primary'); document.getElementById('registerTabBtn').classList.remove('btn-outline');
-    document.getElementById('loginTabBtn').classList.add('btn-outline'); document.getElementById('loginTabBtn').classList.remove('btn-primary');
-  });
-
-  // تسجيل الدخول
-  window.loginUser = async function() {
-    const email = document.getElementById('loginEmail').value.trim();
-    const pass = document.getElementById('loginPassword').value;
-    if(!email||!pass) return showToast('املأ البريد وكلمة المرور');
-    try {
-      const cred = await auth.signInWithEmailAndPassword(email, pass);
-      await loadUserData(cred.user);
-    } catch(e) { showToast('خطأ: '+e.message); }
-  };
-  
-  // تسجيل حساب جديد (أول مستخدم يصبح مديراً)
-  window.registerUser = async function() {
-    const email = document.getElementById('regEmail').value.trim();
-    const pass = document.getElementById('regPassword').value;
-    const name = document.getElementById('regName').value.trim();
-    if(!email||!pass||!name) return showToast('املأ جميع الحقول');
-    try {
-      const usersSnapshot = await db.collection('users').limit(1).get();
-      const isFirstUser = usersSnapshot.empty;
-      const role = isFirstUser ? 'admin' : 'courier';
-      const userCred = await auth.createUserWithEmailAndPassword(email, pass);
-      await db.collection('users').doc(userCred.user.uid).set({
-        uid: userCred.user.uid, email, name, role: role,
-        createdAt: firebase.firestore.FieldValue.serverTimestamp()
-      });
-      await loadUserData(userCred.user);
-      showToast('تم إنشاء الحساب بنجاح، دورك: '+role);
-    } catch(e) { showToast(e.message); }
-  };
-  
-  async function loadUserData(user) {
-    currentUser = user;
-    currentUserUid = user.uid;
-    const doc = await db.collection('users').doc(user.uid).get();
-    if(!doc.exists) { await logout(); showToast('حساب غير مكتمل'); return; }
-    currentUserRole = doc.data().role;
-    document.getElementById('userRoleSpan').innerText = currentUserRole === 'admin' ? 'مدير عام' : (currentUserRole === 'cashier' ? 'كاشير' : 'مندوب');
-    document.getElementById('authScreen').style.display = 'none';
-    document.getElementById('appMain').style.display = 'block';
-    setupNavigation();
-    await refreshAllData();
-  }
-  
-  window.logout = async function() { await auth.signOut(); location.reload(); };
-  
-  // إعداد أزرار التنقل حسب الصلاحية
-  function setupNavigation() {
-    const navDiv = document.getElementById('navButtons');
-    navDiv.innerHTML = '';
-    const pages = [];
-    if(currentUserRole === 'admin' || currentUserRole === 'cashier') pages.push({id:'ordersPage', name:'الطلبات'});
-    if(currentUserRole === 'admin') pages.push({id:'couriersPage', name:'المناديب والحسابات'});
-    if(currentUserRole === 'courier') pages.push({id:'deliveryPage', name:'طلباتي'});
-    if(currentUserRole === 'admin') pages.push({id:'reportsPage', name:'التقارير'});
-    if(pages.length===0) pages.push({id:'deliveryPage', name:'لوحتي'});
-    
-    pages.forEach(p=>{
-      const btn = document.createElement('button');
-      btn.innerText = p.name;
-      btn.classList.add('nav-btn');
-      btn.onclick = () => { showPage(p.id); };
-      navDiv.appendChild(btn);
-    });
-    showPage(pages[0].id);
-  }
-  
-  function showPage(pageId) {
-    document.querySelectorAll('.page-content').forEach(el=>el.style.display='none');
-    document.getElementById(pageId).style.display = 'block';
-    
-    // إضافة صنف active للزر النشط
-    const navButtons = document.querySelectorAll('.nav-btn');
-    navButtons.forEach(btn => {
-      if(btn.innerText === (pageId==='ordersPage'?'الطلبات':pageId==='couriersPage'?'المناديب والحسابات':pageId==='deliveryPage'?'طلباتي':'التقارير')) {
-        btn.classList.add('active');
-      } else {
-        btn.classList.remove('active');
-      }
-    });
-
-    if(pageId === 'ordersPage') refreshOrders();
-    if(pageId === 'couriersPage') refreshCouriersList();
-    if(pageId === 'deliveryPage') refreshMyOrders();
-    if(pageId === 'reportsPage') refreshReports();
-  }
-  
-  // تحديث البيانات الأساسية
-  async function refreshAllData() {
-    await refreshOrders();
-    if(currentUserRole === 'admin') await refreshCouriersList();
-    if(currentUserRole === 'courier') await refreshMyOrders();
-  }
-  
-  // دالة جلب جميع الطلبات المُعدلة (لتفادي مشاكل الفهرسة في Firestore)
-  async function getAllOrders() {
-    let q = db.collection('orders');
-    
-    if(currentUserRole === 'courier') {
-      const snap = await q.where('courierId', '==', currentUserUid).get();
-      return snap.docs
-        .map(d => ({id: d.id, ...d.data()}))
-        .sort((a, b) => {
-          const timeA = a.createdAt?.seconds || 0;
-          const timeB = b.createdAt?.seconds || 0;
-          return timeB - timeA;
-        });
-    } else {
-      const snap = await q.orderBy('createdAt', 'desc').get();
-      return snap.docs.map(d => ({id: d.id, ...d.data()}));
-    }
-  }
-  
-  async function refreshOrders() {
-    const orders = await getAllOrders();
-    const tbody = document.querySelector('#ordersTable tbody');
-    tbody.innerHTML = '';
-    
-    const courierSelect = document.getElementById('assignedCourier');
-    if(courierSelect && (currentUserRole === 'admin' || currentUserRole === 'cashier')) {
-      const usersSnap = await db.collection('users').where('role', '==', 'courier').get();
-      courierSelect.innerHTML = '<option value="">-- اختر مندوب --</option>';
-      usersSnap.forEach(doc=>{
-        const user = doc.data();
-        courierSelect.innerHTML += `<option value="${doc.id}">${user.name || user.email}</option>`;
-      });
-    }
-    for(let o of orders) {
-      let courierName = '';
-      if(o.courierId) {
-        const courierDoc = await db.collection('users').doc(o.courierId).get();
-        if(courierDoc.exists) courierName = courierDoc.data().name || courierDoc.data().email;
-      }
-      let statusText = { 'pending':'⏳ معلق', 'delivering':'🚚 في الطريق', 'delivered':'✅ تم التسليم' }[o.status] || 'معلق';
-      let statusClass = o.status === 'delivering' ? 'status-delivering' : (o.status==='delivered'?'status-delivered':'status-pending');
-      let actions = '';
-      if(currentUserRole === 'admin' || currentUserRole === 'cashier') {
-        actions = `<button onclick="editOrder('${o.id}')" class="btn-outline" style="padding:2px 6px; display:inline; width:auto; margin:0 2px;">✏️</button>
-                   <button onclick="deleteOrder('${o.id}')" class="btn-danger" style="padding:2px 6px; display:inline; width:auto; margin:0 2px;">🗑️</button>`;
-      }
-      tbody.innerHTML += `<tr>
-        <td>${o.orderNo}</td><td>${o.customerName||o.customerPhone}</td><td>${o.address}</td>
-        <td>${o.amount}</td><td>${o.paymentMethod}</td><td>${courierName}</td>
-        <td><span class="status-badge ${statusClass}">${statusText}</span></td>
-        <td>${actions}</td>
-      </tr>`;
-    }
-  }
-  
-  // حفظ الطلب
-  window.saveOrder = async function() {
-    if(currentUserRole !== 'admin' && currentUserRole !== 'cashier') return showToast('غير مصرح');
-    const orderNo = document.getElementById('orderNo').value;
-    const customerPhone = document.getElementById('customerPhone').value;
-    const address = document.getElementById('address').value;
-    const amount = parseFloat(document.getElementById('amount').value);
-    const paymentMethod = document.getElementById('paymentMethod').value;
-    const customerName = document.getElementById('customerName').value;
-    const courierId = document.getElementById('assignedCourier')?.value || '';
-    if(!orderNo || !customerPhone || !address || isNaN(amount) || amount<=0 || !paymentMethod) return showToast('املأ الحقول الأساسية');
-    
-    const editId = document.getElementById('editOrderId').value;
-    
-    const orderData = {
-      orderNo: parseInt(orderNo), customerPhone, customerName, address, amount, paymentMethod,
-      courierId: courierId || null, 
-      status: editId ? 'pending' : 'pending', // المحافظة على الحالة أو إبقاؤها معلقة عند الإنشاء الجديد
-      createdBy: currentUserUid
-    };
-
-    if(!editId) {
-      orderData.createdAt = firebase.firestore.FieldValue.serverTimestamp();
-    }
-    
-    try {
-      if(editId) {
-        await db.collection('orders').doc(editId).update(orderData);
-      } else {
-        await db.collection('orders').add(orderData);
-      }
-      showToast('تم حفظ الطلب بنجاح');
-      resetOrderForm();
-      refreshOrders();
-    } catch(e) { showToast(e.message); }
-  };
-  
-  window.editOrder = async function(id) {
-    const doc = await db.collection('orders').doc(id).get();
-    if(!doc.exists) return;
-    const d = doc.data();
-    document.getElementById('editOrderId').value = id;
-    document.getElementById('orderNo').value = d.orderNo;
-    document.getElementById('customerPhone').value = d.customerPhone;
-    document.getElementById('customerName').value = d.customerName||'';
-    document.getElementById('address').value = d.address;
-    document.getElementById('amount').value = d.amount;
-    document.getElementById('paymentMethod').value = d.paymentMethod;
-    if(document.getElementById('assignedCourier')) document.getElementById('assignedCourier').value = d.courierId||'';
-    showToast('يمكنك تعديل الطلب ثم ضغط حفظ');
-  };
-  
-  window.deleteOrder = async function(id) {
-    if(!confirm('حذف الطلب نهائياً؟')) return;
-    await db.collection('orders').doc(id).delete();
-    showToast('تم الحذف');
-    refreshOrders();
-  };
-  
-  function resetOrderForm() {
-    document.getElementById('editOrderId').value = '';
-    document.getElementById('orderNo').value = '';
-    document.getElementById('customerPhone').value = '';
-    document.getElementById('customerName').value = '';
-    document.getElementById('address').value = '';
-    document.getElementById('amount').value = '';
-    document.getElementById('paymentMethod').value = '';
-    if(document.getElementById('assignedCourier')) document.getElementById('assignedCourier').value = '';
-  }
-  
-  // قائمة المناديب مع الفرز والاحتساب المالي الصحيح (دون قراءة الطلبات المسواة مالياً)
-  async function refreshCouriersList() {
-    const couriersSnap = await db.collection('users').where('role', '==', 'courier').get();
-    let couriers = [];
-    for(let doc of couriersSnap.docs) {
-      const user = doc.data();
-      const ordersSnap = await db.collection('orders').where('courierId', '==', doc.id).get();
-      
-      let totalAmount = 0;
-      let orderCount = 0;
-      
-      ordersSnap.forEach(o => {
-        const orderData = o.data();
-        // احتساب الطلبات التي سلمها ولم يتم تصفيرها/تسويتها مالياً بعد
-        if(orderData.status === 'delivered' && !orderData.courierSettled) {
-          totalAmount += orderData.amount;
-          orderCount++;
+        function showToast(msg) {
+            const toast = document.getElementById('toastMsg');
+            toast.innerText = msg;
+            toast.style.display = 'block';
+            setTimeout(() => { toast.style.display = 'none'; }, 3500);
         }
-      });
-      
-      couriers.push({ id: doc.id, name: user.name || user.email, totalAmount, orderCount, settled: user.settled || false });
-    }
-    
-    // ترتيب تصاعدي حسب إجمالي عهدة المبالغ (الأقل أولاً)
-    couriers.sort((a,b)=> a.totalAmount - b.totalAmount);
-    const tbody = document.querySelector('#couriersTable tbody');
-    tbody.innerHTML = '';
-    for(let c of couriers) {
-      tbody.innerHTML += `<tr>
-        <td>${c.name}</td><td>${c.orderCount} طلبات</td><td>${c.totalAmount.toFixed(2)} ريال</td>
-        <td>${c.totalAmount === 0 ? '✅ مُصفّر / مُسوّى' : '⏳ ذمّة معلّقة'}</td>
-        <td><button class="btn-danger" onclick="resetCourier('${c.id}')" style="padding:4px 10px; width:auto; margin:0;">تصفير وتسوية</button></td>
-      </tr>`;
-    }
-    document.getElementById('manageAccountsCard').style.display = currentUserRole === 'admin' ? 'block' : 'none';
-    if(currentUserRole === 'admin') await listAllAccounts();
-  }
-  
-  // دالة تصفير وتسوية العهدة المالية للمندوب (تحمي تقارير الأرباح والمحل من الضياع)
-  window.resetCourier = async function(courierId) {
-    if(!confirm('هل أنت متأكد من تسوية وتصفير حساب هذا المندوب؟ سيتم أرشفة المبالغ وتصفير الحساب الحالي مع الحفاظ على الطلبات في التقارير العامة للمحل.')) return;
-    
-    try {
-      const ordersSnap = await db.collection('orders')
-        .where('courierId', '==', courierId)
-        .where('status', '==', 'delivered')
-        .get();
-        
-      if (ordersSnap.empty) {
-        showToast('لا توجد طلبات مسلّمة بحاجة لتسوية ماليّة لهذا المندوب حالياً.');
-        return;
-      }
 
-      const batch = db.batch();
-      
-      ordersSnap.forEach(doc => {
-        // وسم الطلبات بـ "تم تسويتها ماليّاً" بدلاً من مسحها
-        batch.update(doc.ref, { courierSettled: true });
-      });
-      
-      await batch.commit();
-      
-      await db.collection('users').doc(courierId).update({ 
-        settled: true, 
-        totalResetAt: firebase.firestore.FieldValue.serverTimestamp() 
-      });
-      
-      showToast('تمت التسوية المالية وتصفير عهدة المندوب بنجاح 🎉');
-      refreshCouriersList();
-      if(currentUserRole === 'admin') refreshOrders();
-    } catch (e) {
-      showToast("فشلت عملية التسوية: " + e.message);
-    }
-  };
-  
-  async function listAllAccounts() {
-    const usersSnap = await db.collection('users').get();
-    let html = '<h3 style="margin:15px 0 10px 0; font-size:1rem; border-top:1px solid var(--border); padding-top:10px;">الحسابات المسجلة حالياً</h3><ul style="list-style:none;">';
-    usersSnap.forEach(doc=>{
-      const u = doc.data();
-      html += `<li style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; background:rgba(0,0,0,0.2); padding:8px 12px; border-radius:10px;">
-        <span>${u.name||u.email} (${u.role === 'admin' ? 'مدير عام' : u.role === 'cashier' ? 'كاشير' : 'مندوب'})</span>
-        ${u.role !== 'admin' ? `<button class="btn-danger" onclick="deleteAccount('${doc.id}')" style="padding:4px 8px; width:auto; margin:0; font-size:0.75rem;">حذف</button>` : ''}
-      </li>`;
-    });
-    html += '</ul>';
-    document.getElementById('accountsList').innerHTML = html;
-  }
-  
-  window.deleteAccount = async function(uid) {
-    if(!confirm('حذف هذا الحساب من سجلات الموظفين بالـ Firestore؟')) return;
-    await db.collection('users').doc(uid).delete();
-    showToast('تم حذف المستند بنجاح');
-    listAllAccounts();
-  };
-  
-  // دالة إنشاء الحسابات الفرعية الآمنة (لا تتسبب بطرد المدير أثناء تسجيل الحساب)
-  window.createSubAccount = async function() {
-    const email = document.getElementById('newUserEmail').value.trim();
-    const pass = document.getElementById('newUserPass').value;
-    const name = document.getElementById('newUserName').value.trim();
-    const role = document.getElementById('newUserRole').value;
-    if(!email||!pass||!name) return showToast('املأ جميع الحقول الفرعية');
-    
-    try {
-      // استخدام كائن تطبيق ثانٍ مستقل لمنع فصل جلسة المدير الحالي
-      const secondaryApp = firebase.initializeApp(firebaseConfig, "SecondaryApp_" + Date.now());
-      const userCred = await secondaryApp.auth().createUserWithEmailAndPassword(email, pass);
-      
-      await db.collection('users').doc(userCred.user.uid).set({
-        uid: userCred.user.uid, email, name, role, createdAt: firebase.firestore.FieldValue.serverTimestamp()
-      });
-      
-      await secondaryApp.auth().signOut();
-      await secondaryApp.delete();
-      
-      showToast(`تم إنشاء حساب الـ ${role === 'courier' ? 'مندوب' : 'كاشير'} بنجاح!`);
-      document.getElementById('newUserEmail').value = '';
-      document.getElementById('newUserPass').value = '';
-      document.getElementById('newUserName').value = '';
-      
-      await listAllAccounts();
-      if(role === 'courier') refreshCouriersList();
-    } catch(e) { showToast("فشل الإنشاء: " + e.message); }
-  };
-  
-  // واجهة المندوب
-  async function refreshMyOrders() {
-    const ordersSnap = await db.collection('orders').where('courierId', '==', currentUserUid).get();
-    let orders = [];
-    let totalToday = 0;
-    const today = new Date().toISOString().slice(0,10);
-    
-    for(let doc of ordersSnap.docs) {
-      const o = doc.data();
-      const orderDate = o.createdAt?.toDate?.()?.toISOString().slice(0,10) || '';
-      if(o.status === 'delivered' && orderDate === today) totalToday += o.amount;
-      orders.push({id: doc.id, ...o});
-    }
-    document.getElementById('myTotalToday').innerText = totalToday.toFixed(2);
-    const tbody = document.querySelector('#myOrdersTable tbody');
-    tbody.innerHTML = '';
-    for(let o of orders) {
-      let statusText = { 'pending':'⏳ معلق', 'delivering':'🚚 في الطريق', 'delivered':'✅ تم التسليم' }[o.status] || 'معلق';
-      let actionHtml = '';
-      if(o.status === 'pending') {
-        actionHtml = `<button onclick="updateOrderStatus('${o.id}', 'delivering')" class="btn-primary" style="padding:4px 8px; margin:0; width:auto; font-size:0.75rem;">🚚 في الطريق</button>`;
-      } else if(o.status === 'delivering') {
-        actionHtml = `<button onclick="updateOrderStatus('${o.id}', 'delivered')" class="btn-success" style="padding:4px 8px; margin:0; width:auto; font-size:0.75rem; color:#0A0D14;">✅ تم التسليم</button>`;
-      } else {
-        actionHtml = `<span class="status-badge status-delivered">مسلّم (مغلق)</span>`;
-      }
-      tbody.innerHTML += `<tr>
-        <td>${o.orderNo}</td><td>${o.address}</td><td>${o.amount}</td>
-        <td><span class="status-badge">${statusText}</span></td>
-        <td>${actionHtml}</td>
-      </tr>`;
-    }
-  }
-  
-  window.updateOrderStatus = async function(orderId, newStatus) {
-    const docRef = db.collection('orders').doc(orderId);
-    const docSnap = await docRef.get();
-    if(docSnap.data().status === 'delivered') return showToast('لا يمكن تغيير حالة طلب مُسلّم مسبقاً');
-    
-    await docRef.update({ status: newStatus, lastUpdate: firebase.firestore.FieldValue.serverTimestamp() });
-    showToast(`تم التحديث: ${newStatus === 'delivering' ? 'في الطريق 🚚' : 'تم التسليم ✅'}`);
-    refreshMyOrders();
-    if(currentUserRole === 'admin') refreshOrders();
-  };
-  
-  // التقارير العامة للمحل
-  async function refreshReports() {
-    const snap = await db.collection('orders').get();
-    let total = 0, count = snap.size;
-    snap.forEach(doc => {
-      total += doc.data().amount || 0;
-    });
-    document.getElementById('generalStats').innerHTML = `
-      <div style="font-size:1.1rem; line-height:2rem;">
-        📊 <strong>إجمالي مبيعات المحل التاريخية:</strong> <span style="color:var(--success); font-weight:bold;">${total.toFixed(2)} ريال</span><br>
-        📦 <strong>إجمالي عدد الطلبات الكلي:</strong> <span>${count} طلب</span>
-      </div>`;
-  }
-  
-  // الاستماع لتغيير حالة المصادقة
-  auth.onAuthStateChanged(async (user) => {
-    if(user) await loadUserData(user);
-    else { document.getElementById('authScreen').style.display = 'block'; document.getElementById('appMain').style.display = 'none'; }
-  });
-</script>
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                db.collection('users').doc(user.uid).get().then(doc => {
+                    if(doc.exists) {
+                        currentUserData = doc.data();
+                        document.getElementById('userBadge').innerText = currentUserData.role === 'admin' ? '⭐ مشرف عام' : '🛵 كابتن توصيل';
+                        setupUIBasedOnRole();
+                        loadOrders();
+                        loadDriversList();
+                    } else {
+                        showToast("حسابك لم يتم إعداده في قاعدة البيانات بشكل صحيح.");
+                        auth.signOut();
+                    }
+                }).catch(err => {
+                    showToast("خطأ في جلب بيانات الصلاحية: " + err.message);
+                });
+            } else {
+                document.getElementById('authScreen').style.display = 'block';
+                document.getElementById('appScreen').style.display = 'none';
+            }
+        });
+
+        function setupUIBasedOnRole() {
+            document.getElementById('authScreen').style.display = 'none';
+            document.getElementById('appScreen').style.display = 'block';
+            
+            if(currentUserData.role === 'driver') {
+                document.getElementById('navAddOrder').style.display = 'none';
+                document.getElementById('navDrivers').style.display = 'none';
+            } else {
+                document.getElementById('navAddOrder').style.display = 'block';
+                document.getElementById('navDrivers').style.display = 'block';
+            }
+        }
+
+        document.getElementById('loginForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value.trim();
+            const pass = document.getElementById('loginPassword').value;
+            
+            auth.signInWithEmailAndPassword(email, pass)
+                .then(() => showToast("أهلاً بك مجدداً في مدينة العصائر! 🎉"))
+                .catch(err => showToast("بيانات الدخول غير صحيحة: " + err.message));
+        });
+
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            auth.signOut().then(() => showToast("تم تسجيل الخروج بنجاح"));
+        });
+
+        function switchSection(sectionId, btn) {
+            document.querySelectorAll('.app-section').forEach(sec => sec.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(sectionId).classList.add('active');
+            btn.classList.add('active');
+        }
+
+        document.getElementById('orderForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            if(currentUserData.role !== 'admin') return showToast("عذراً، هذه الصلاحية للمشرفين فقط!");
+
+            const driverSelect = document.getElementById('orderDriver');
+            const selectedDriverId = driverSelect.value;
+            const selectedDriverName = driverSelect.options[driverSelect.selectedIndex].text;
+
+            const orderData = {
+                customerName: document.getElementById('custName').value.trim(),
+                phone: document.getElementById('custPhone').value.trim(),
+                address: document.getElementById('custAddress').value.trim(),
+                items: document.getElementById('orderItems').value.trim(),
+                price: parseFloat(document.getElementById('orderPrice').value),
+                driverId: selectedDriverId || null,
+                driverName: selectedDriverId ? selectedDriverName : "غير معين",
+                status: "pending",
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            };
+
+            db.collection('orders').add(orderData).then(() => {
+                showToast("✅ تم إرسال الطلب وحفظه في السحابة فوراً!");
+                document.getElementById('orderForm').reset();
+                switchSection('ordersSection', document.querySelectorAll('.nav-btn')[0]);
+            }).catch(err => showToast("فشل الحفظ: " + err.message));
+        });
+
+        function loadOrders() {
+            let query = db.collection('orders').orderBy('createdAt', 'desc');
+            
+            if(currentUserData.role === 'driver') {
+                query = query.where('driverId', '==', auth.currentUser.uid);
+            }
+
+            query.onSnapshot(snapshot => {
+                const tbody = document.getElementById('ordersTableBody');
+                tbody.innerHTML = '';
+
+                if(snapshot.empty) {
+                    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; color:var(--text-light);">لا توجد طلبات نشطة حالياً.</td></tr>';
+                    return;
+                }
+
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    let statusClass = 'status-pending';
+                    let statusText = 'قيد الانتظار ⏳';
+                    if(data.status === 'delivering') { statusClass = 'status-delivering'; statusText = 'جاري التوصيل 🛵'; }
+                    if(data.status === 'delivered') { statusClass = 'status-delivered'; statusText = 'تم التسليم ✔️'; }
+
+                    let actionBtn = '';
+                    if(currentUserData.role === 'admin') {
+                        actionBtn = `<button class="btn btn-danger" style="margin:0; padding:4px 8px; font-size:0.75rem; width:auto;" onclick="deleteOrder('${doc.id}')">حذف</button>`;
+                    } else if(currentUserData.role === 'driver' && data.status !== 'delivered') {
+                        const nextStatus = data.status === 'pending' ? 'delivering' : 'delivered';
+                        const btnText = data.status === 'pending' ? 'بدء التوصيل 🚀' : 'تأكيد التسليم ✅';
+                        actionBtn = `<button class="btn btn-primary" style="margin:0; padding:6px 10px; font-size:0.75rem; width:auto;" onclick="updateStatus('${doc.id}', '${nextStatus}')">${btnText}</button>`;
+                    }
+
+                    tbody.innerHTML += `
+                        <tr>
+                            <td><b>${data.customerName}</b></td>
+                            <td><a href="tel:${data.phone}" style="color:var(--primary); text-decoration:none;">${data.phone}</a></td>
+                            <td style="max-width:150px; overflow:hidden; text-overflow:ellipsis;">${data.address}</td>
+                            <td>${data.items}</td>
+                            <td style="color:var(--success); font-weight:bold;">${data.price} ريال</td>
+                            <td><span style="font-size:0.8rem; color:var(--text-light);">${data.driverName || 'غير معين'}</span></td>
+                            <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+                            <td>${actionBtn}</td>
+                        </tr>
+                    `;
+                });
+            }, err => {
+                console.log(err);
+            });
+        }
+
+        window.updateStatus = function(id, newStatus) {
+            db.collection('orders').doc(id).update({ status: newStatus })
+                .then(() => showToast("تم تحديث حالة الطلب بالسحابة 📲"))
+                .catch(err => showToast("فشل التحديث: " + err.message));
+        };
+
+        window.deleteOrder = function(id) {
+            if(confirm("هل أنت متأكد من حذف هذا الطلب نهائياً؟")) {
+                db.collection('orders').doc(id).delete()
+                    .then(() => showToast("تم حذف الطلب بنجاح"))
+                    .catch(err => showToast("خطأ أثناء الحذف: " + err.message));
+            }
+        };
+
+        document.getElementById('driverForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            if(currentUserData.role !== 'admin') return showToast("صلاحية تفعيل الموظفين للمشرفين فقط!");
+
+            const name = document.getElementById('driverName').value.trim();
+            const email = document.getElementById('driverEmail').value.trim();
+            const password = document.getElementById('driverPassword').value;
+            const role = document.getElementById('driverRole').value;
+
+            const tempApp = firebase.initializeApp(firebaseConfig, "SecondaryApp");
+            tempApp.auth().createUserWithEmailAndPassword(email, password)
+                .then(cred => {
+                    return db.collection('users').doc(cred.user.uid).set({
+                        name: name,
+                        email: email,
+                        role: role
+                    });
+                })
+                .then(() => {
+                    showToast(`🎉 تم إنشاء وتفعيل حساب [${name}] بنجاح كـ ${role === 'admin' ? 'مشرف' : 'سائق'}`);
+                    document.getElementById('driverForm').reset();
+                    tempApp.delete();
+                })
+                .catch(err => {
+                    showToast("فشل إنشاء الحساب: " + err.message);
+                    tempApp.delete();
+                });
+        });
+
+        function loadDriversList() {
+            db.collection('users').onSnapshot(snapshot => {
+                const select = document.getElementById('orderDriver');
+                const usersTbody = document.getElementById('usersTableBody');
+                
+                if(!select || !usersTbody) return;
+
+                select.innerHTML = '<option value="">إرسال للمكتب (بدون سائق)</option>';
+                usersTbody.innerHTML = '';
+
+                snapshot.forEach(doc => {
+                    const u = doc.data();
+                    
+                    if(u.role === 'driver') {
+                        select.innerHTML += `<option value="${doc.id}">${u.name}</option>`;
+                    }
+
+                    usersTbody.innerHTML += `
+                        <tr>
+                            <td><b>${u.name}</b></td>
+                            <td>${u.email}</td>
+                            <td>${u.role === 'admin' ? '⭐ مشرف نظام' : '🛵 كابتن توصيل'}</td>
+                        </tr>
+                    `;
+                });
+            });
+        }
+    </script>
 </body>
 </html>
